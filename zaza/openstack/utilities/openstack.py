@@ -2740,8 +2740,14 @@ def write_private_key(keypair_name, key):
     :param key: PEM Encoded Private Key
     :type key: str
     """
+    # Create the key file with mode 0o600 to allow the developer to pass it to
+    # the `ssh` command without getting a "bad permissions" error.
+    stored_umask = os.umask(0o177)
+
     with open(get_private_key_file(keypair_name), 'w') as key_file:
         key_file.write(key)
+
+    os.umask(stored_umask)
 
 
 def get_private_key(keypair_name):
